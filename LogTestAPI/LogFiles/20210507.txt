@@ -1,1 +1,3 @@
 2021-05-07 12:37:34.490 +03:00 [Information] { FirstName: "İrem", LastName: "Çalışkan", Message: "Bu bir test mesajıdır." }
+2021-05-07 14:23:32.120 +03:00 [Information] "{ FirstName = İrem, LastName = Çalışkan, Message = Bu bir test mesajıdır. }Mesajım"
+2021-05-07 14:24:58.598 +03:00 [Information]  Ekstra mesajım burada: { FirstName: "İrem", LastName: "Çalışkan", Message: "Bu bir test mesajıdır." }

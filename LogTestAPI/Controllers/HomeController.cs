@@ -14,7 +14,7 @@ namespace LogTestAPI.Controllers
         { // Ex. Logging is done when Index runs - Örneğin, Index çalıştığı an loglama yapılacak
             var message = new { FirstName = "İrem", LastName = "Çalışkan", Message = "Bu bir test mesajıdır." };
             LoggerFactory.DatabaseLogManager().Information("{@message}", message);
-            LoggerFactory.FileLogManager().Information("{@message}", message);
+            LoggerFactory.FileLogManager().Information(" Ekstra mesajım burada: " + "{@message}", message );
             return View();
         }
     }
