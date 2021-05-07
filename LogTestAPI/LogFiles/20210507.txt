@@ -1,0 +1,1 @@
+2021-05-07 12:37:34.490 +03:00 [Information] { FirstName: "İrem", LastName: "Çalışkan", Message: "Bu bir test mesajıdır." }
