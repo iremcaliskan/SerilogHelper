@@ -51,7 +51,7 @@ namespace LogHelper.Logging.Concrete
                 .WriteTo.Logger(lc => lc.Filter.ByIncludingOnly(info => info.Level == LogEventLevel.Information))
                 .WriteTo.File(string.Format(@"{0}\Information\information-.log", LogFolderPath), LogEventLevel.Information, rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}  {Level}] {Message:lj}{NewLine}{Exception}")
 
-                .WriteTo.Logger(lc => lc.Filter.ByExcluding(other => other.Level == LogEventLevel.Error || other.Level == LogEventLevel.Information))
+                .WriteTo.Logger(lc => lc.Filter.ByExcluding(other => other.Level == LogEventLevel.Error && other.Level == LogEventLevel.Information))
                 .WriteTo.File(string.Format(@"{0}\Other\other-.log", LogFolderPath), rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}  {Level}] {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
 
