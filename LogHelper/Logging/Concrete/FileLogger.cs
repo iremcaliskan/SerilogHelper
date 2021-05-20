@@ -9,7 +9,9 @@ namespace LogHelper.Logging.Concrete
 {
     public class FileLogger : LoggingConfiguration, ILogManager
     {
-        private readonly string LogFolderPath = Environment.CurrentDirectory + @"\LogFiles\"; // Folder path
+        // Folder path: 
+        //private readonly string LogFolderPath = Environment.CurrentDirectory + @"\LogFiles\"; // API path + /LogFiles/
+        private readonly string LogFolderPath = Directory.GetParent(Directory.GetCurrentDirectory()) + @"\LogFiles\"; // API's Parent Path = LogHelper(Root Folder) + /LogFiles/
 
         public FileLogger()
         {
