@@ -8,7 +8,7 @@ namespace LogHelper.Logging.Concrete
 
         public Logger InstanceLogger()
         {
-            return default(Logger);
+            return default(Logger); // Pipeline - Veri hattı, ardışık düzen
         }
     }
 }

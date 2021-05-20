@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace LogHelper.Logging.Concrete
+﻿namespace LogHelper.Logging.Concrete
 {
     public class LoggerFactory
     { // When this class is called, both loggers are easily accessible - Bu sınıf çağırılınca iki Logger'a da rahatlıkla ulaşılır

@@ -9,7 +9,8 @@ namespace LogHelper.Logging.Concrete
 {
     public class FileLogger : LoggingConfiguration, ILogManager
     {
-        private readonly string LogFolderPath = @"C:\Users\ASUS\OneDrive\Belgeler\GitHub\SerilogHelper\LogFiles\"; // Folder path - Dosya yolu
+        private readonly string LogFolderPath = Environment.CurrentDirectory + @"\LogFiles\"; // Folder path
+
         public FileLogger()
         {
             ControlDirectories(LogFolderPath);
