@@ -11,14 +11,17 @@ namespace LogHelper.Logging.Concrete
     {
         // Folder path: 
         //private readonly string LogFolderPath = Environment.CurrentDirectory + @"\LogFiles\"; // API path + /LogFiles/
+        //private readonly string LogFolderPath = @$"C:\LogFiles\"; // Folder path
         private readonly string LogFolderPath = Directory.GetParent(Directory.GetCurrentDirectory()) + @"\LogFiles\"; // API's Parent Path = LogHelper(Root Folder) + /LogFiles/
+        private static readonly object _lock = new object();
+        private Logger _logger;
 
         public FileLogger()
         {
             ControlDirectories(LogFolderPath);
         }
 
-        private void ControlDirectories(string path)
+        private static void ControlDirectories(string path)
         {
             if (!Directory.Exists(path))
             {
@@ -47,17 +50,23 @@ namespace LogHelper.Logging.Concrete
 
         protected override Logger GetLogger()
         { // Create a Logger object that is provided by Serilog - GetLogger() metodu Serilog'un sağladığı Logger nesnesi üretir
-            return new LoggerConfiguration()
-                .WriteTo.Logger(lc => lc.Filter.ByIncludingOnly(error => error.Level == LogEventLevel.Error))
-                .WriteTo.File(string.Format(@"{0}\Error\error-.log", LogFolderPath), LogEventLevel.Error, rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}  {Level}] {Message:lj}{NewLine}{Exception}")
+            if (_logger == null)
+            {
+                lock (_lock) // thread safe, singleton
+                {
+                    _logger = new LoggerConfiguration()
+                                .WriteTo.Logger(lc => lc.Filter.ByIncludingOnly(error => error.Level == LogEventLevel.Error))
+                                .WriteTo.File(string.Format(@"{0}\Error\error-.log", LogFolderPath), LogEventLevel.Error, rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} | {Level}] {Message:lj}{NewLine}{Exception}")
 
-                .WriteTo.Logger(lc => lc.Filter.ByIncludingOnly(info => info.Level == LogEventLevel.Information))
-                .WriteTo.File(string.Format(@"{0}\Information\information-.log", LogFolderPath), LogEventLevel.Information, rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}  {Level}] {Message:lj}{NewLine}{Exception}")
+                                .WriteTo.Logger(lc => lc.Filter.ByIncludingOnly(info => info.Level == LogEventLevel.Information))
+                                .WriteTo.File(string.Format(@"{0}\Information\information-.log", LogFolderPath), LogEventLevel.Information, rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} | {Level}] {Message:lj}{NewLine}{Exception}")
 
-                .WriteTo.Logger(lc => lc.Filter.ByExcluding(other => other.Level == LogEventLevel.Error && other.Level == LogEventLevel.Information))
-                .WriteTo.File(string.Format(@"{0}\Other\other-.log", LogFolderPath), rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz}  {Level}] {Message:lj}{NewLine}{Exception}")
-                .CreateLogger();
-
+                                .WriteTo.Logger(lc => lc.Filter.ByExcluding(other => other.Level == LogEventLevel.Error || other.Level == LogEventLevel.Information))
+                                .WriteTo.File(string.Format(@"{0}\Other\other-.log", LogFolderPath), LogEventLevel.Warning, rollingInterval: RollingInterval.Day, retainedFileCountLimit: null, fileSizeLimitBytes: 5000000, outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} | {Level}] {Message:lj}{NewLine}{Exception}")
+                                .CreateLogger();
+                    // LogEventLevel: Verbose < Debug < Information < Warning < Error < Fatal
+                }
+            }
             //return new LoggerConfiguration()
             //        .WriteTo.File(string.Format("{0}{1}", Directory.GetCurrentDirectory() + LogFolder, ".txt"), // File Name
             //        rollingInterval: RollingInterval.Day, // Time to new file is one day - Günlük olarak loglama yapılacak
@@ -65,6 +74,7 @@ namespace LogHelper.Logging.Concrete
             //        fileSizeLimitBytes: 5000000,
             //        outputTemplate: "{Timestamp:yyyy-MM-dd HH:mm:ss.fff zzz} [{Level}] {Message}{NewLine}{Exception}")
             //        .CreateLogger();
+            return _logger;
         }
 
         /*

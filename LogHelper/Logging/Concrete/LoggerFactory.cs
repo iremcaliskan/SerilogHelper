@@ -2,10 +2,11 @@
 {
     public class LoggerFactory
     { // When this class is called, both loggers are easily accessible - Bu sınıf çağırılınca iki Logger'a da rahatlıkla ulaşılır
-        // Factory Method Pattern
-        static readonly object _lock = new object();
+      // Factory Method Pattern
+        private static readonly object _lock = new object();
         private static DatabaseLogger _databaseLogger;
         private static FileLogger _fileLogger;
+
         private LoggerFactory()
         {
 
